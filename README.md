@@ -30,7 +30,7 @@
 <!-- #### Back-end: -->
 - [ ] Users:
     - [x] CRUD;
-      - [ ] Hash password stored in database;
+      - [x] Hash password stored in database;
     - [ ] Login:
       - [ ] authorization with JWT;
     - [ ] Follow another user;
