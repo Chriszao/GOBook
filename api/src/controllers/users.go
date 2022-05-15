@@ -30,7 +30,22 @@ func InsertUser(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	repository := repositories.NewUserRepository(db)
+
 	userId, err := repository.Create(user)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	createdUserId := map[string]uint64{
+		"id": userId,
+	}
+
+	writer.WriteHeader(http.StatusCreated)
+
+	if err := json.NewEncoder(writer).Encode(createdUserId); err != nil {
+		log.Fatal(err)
+	}
 }
 
 func FetchUsers(writer http.ResponseWriter, request *http.Request) {
