@@ -1,6 +1,7 @@
 package models
 
 import (
+	"api/src/providers"
 	"errors"
 	"strings"
 	"time"
@@ -22,7 +23,10 @@ func (user *User) Prepare(operation string) error {
 		return err
 	}
 
-	user.trimWhiteSpaces()
+	if err := user.formatData(operation); err != nil {
+		return err
+	}
+
 	return nil
 }
 
@@ -50,8 +54,19 @@ func (user *User) validate(operation string) error {
 	return nil
 }
 
-func (user *User) trimWhiteSpaces() {
+func (user *User) formatData(operation string) error {
 	user.Name = strings.TrimSpace(user.Name)
 	user.Nick = strings.TrimSpace(user.Nick)
 	user.Email = strings.TrimSpace(user.Email)
+
+	if operation == "new" {
+		hashedPassword, err := providers.Hash(user.Password)
+
+		if err != nil {
+			return err
+		}
+
+		user.Password = string(hashedPassword)
+	}
+	return nil
 }
