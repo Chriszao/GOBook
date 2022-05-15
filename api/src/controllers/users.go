@@ -1,9 +1,36 @@
 package controllers
 
-import "net/http"
+import (
+	"api/src/database"
+	"api/src/models"
+	"api/src/repositories"
+	"encoding/json"
+	"io/ioutil"
+	"log"
+	"net/http"
+)
 
 func InsertUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("InsertingUser"))
+	requestBody, err := ioutil.ReadAll(request.Body)
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	var user models.User
+
+	if err = json.Unmarshal(requestBody, &user); err != nil {
+		log.Fatal(err)
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		log.Fatal(err)
+	}
+
+	repository := repositories.NewUserRepository(db)
+	userId, err := repository.Create(user)
 }
 
 func FetchUsers(writer http.ResponseWriter, request *http.Request) {
