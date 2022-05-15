@@ -25,6 +25,11 @@ func InsertUser(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	if err := user.Prepare(); err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
 	db, err := database.Connect()
 
 	if err != nil {
