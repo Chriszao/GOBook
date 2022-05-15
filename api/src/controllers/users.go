@@ -76,6 +76,12 @@ func FetchUsers(writer http.ResponseWriter, request *http.Request) {
 		responses.Error(writer, http.StatusInternalServerError, err)
 	}
 
+	// if users slice length is equals to zero, init an empty slice
+	// with length zero, to return an empty array, instead nil
+	if len(users) == 0 {
+		users = []models.User{}
+	}
+
 	responses.JSON(writer, http.StatusOK, users)
 }
 
