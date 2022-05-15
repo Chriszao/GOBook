@@ -54,6 +54,8 @@ func InsertUser(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	user.Password = ""
+
 	responses.JSON(writer, http.StatusOK, user)
 }
 
