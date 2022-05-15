@@ -31,7 +31,7 @@ func InsertUser(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	if err := user.Prepare(); err != nil {
+	if err := user.Prepare("new"); err != nil {
 		responses.Error(writer, http.StatusBadRequest, err)
 		return
 	}
@@ -118,7 +118,50 @@ func GetUserById(writer http.ResponseWriter, request *http.Request) {
 }
 
 func UpdateUser(writer http.ResponseWriter, request *http.Request) {
-	writer.Write([]byte("UpdatingUser"))
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	requestBody, err := ioutil.ReadAll(request.Body)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnprocessableEntity, err)
+		return
+	}
+
+	var user models.User
+
+	if err = json.Unmarshal(requestBody, &user); err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	if err = user.Prepare("edit"); err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	if err = repository.Update(userId, user); err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(writer, http.StatusNoContent, nil)
 }
 
 func DeleteUser(writer http.ResponseWriter, request *http.Request) {
