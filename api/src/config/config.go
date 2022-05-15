@@ -15,6 +15,9 @@ var (
 
 	// API port
 	Port = 0
+
+	// Key used to sign token jwt
+	JwtSecretKey []byte
 )
 
 // Load evironment variables
@@ -36,4 +39,6 @@ func Load() {
 		os.Getenv("DB_PASSWORD"),
 		os.Getenv("DB_NAME"),
 	)
+
+	JwtSecretKey = []byte(os.Getenv("JWT_SECRET_KEY"))
 }
