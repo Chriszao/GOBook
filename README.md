@@ -29,7 +29,10 @@
 
 <!-- #### Back-end: -->
 - [ ] Users:
-    - [ ] CRUD;
+    - [x] CRUD;
+      - [ ] Hash password stored in database;
+    - [ ] Login:
+      - [ ] authorization with JWT;
     - [ ] Follow another user;
     - [ ] Unfollow another user;
     - [ ] Search for all users you follow;
