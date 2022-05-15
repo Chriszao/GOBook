@@ -102,6 +102,28 @@ func (repository User) FindById(id uint64) (models.User, error) {
 	return user, nil
 }
 
+func (repository User) FindByEmail(email string) (models.User, error) {
+	rows, err := repository.db.Query(
+		"SELECT id, password FROM user WHERE email = ?", email,
+	)
+
+	if err != nil {
+		return models.User{}, err
+	}
+
+	defer rows.Close()
+
+	var user models.User
+
+	if rows.Next() {
+		if err = rows.Scan(&user.ID, &user.Password); err != nil {
+			return models.User{}, err
+		}
+	}
+
+	return user, nil
+}
+
 func (repository User) Update(id uint64, user models.User) error {
 	statement, err := repository.db.Prepare(
 		"UPDATE user SET name = ?, nick = ?, email = ? WHERE id = ?",
