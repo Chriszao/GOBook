@@ -8,7 +8,6 @@ import (
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
-	"fmt"
 	"io/ioutil"
 	"net/http"
 )
@@ -51,6 +50,13 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
-	token, _ := config.GenerateToken(userExists.ID)
-	fmt.Println(token)
+	token, err := config.GenerateToken(userExists.ID)
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	writer.Write([]byte(token))
+
 }
