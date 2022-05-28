@@ -36,4 +36,16 @@ var userRoutes = []Route{
 		Function:  controllers.DeleteUser,
 		IsPrivate: true,
 	},
+	{
+		URI:       "/users/{id}/follow",
+		Method:    http.MethodPost,
+		Function:  controllers.FollowUser,
+		IsPrivate: true,
+	},
+	{
+		URI:       "/users/{id}/unfollow",
+		Method:    http.MethodPost,
+		Function:  controllers.UnFollowUser,
+		IsPrivate: true,
+	},
 }

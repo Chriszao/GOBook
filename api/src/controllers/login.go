@@ -58,5 +58,4 @@ func Login(writer http.ResponseWriter, request *http.Request) {
 	}
 
 	writer.Write([]byte(token))
-
 }

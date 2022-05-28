@@ -232,3 +232,85 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 
 	responses.JSON(writer, http.StatusNoContent, nil)
 }
+
+func FollowUser(writer http.ResponseWriter, request *http.Request) {
+
+	followerId, err := config.ExtractUserId(request)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	if userId == followerId {
+		responses.Error(writer, http.StatusForbidden, errors.New("it is not allowed to follow yourself"))
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	if err := repository.FollowUser(userId, followerId); err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(writer, http.StatusNoContent, nil)
+}
+
+func UnFollowUser(writer http.ResponseWriter, request *http.Request) {
+	followerId, err := config.ExtractUserId(request)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnauthorized, err)
+		return
+	}
+
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	if userId == followerId {
+		responses.Error(writer, http.StatusForbidden, errors.New("it is not allowed to unfollow yourself"))
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	if err := repository.UnFollowUser(userId, followerId); err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	responses.JSON(writer, http.StatusNoContent, nil)
+}
