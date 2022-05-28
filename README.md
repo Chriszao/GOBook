@@ -33,8 +33,8 @@
       - [x] Hash password stored in database;
     - [x] Login:
       - [x] authorization with JWT;
-    - [ ] Follow another user;
-    - [ ] Unfollow another user;
+    - [x] Follow another user;
+    - [x] Unfollow another user;
     - [ ] Search for all users you follow;
     - [ ] Search all users who are followed;
     - [ ] Update Password.
