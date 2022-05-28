@@ -31,8 +31,8 @@
 - [ ] Users:
     - [x] CRUD;
       - [x] Hash password stored in database;
-    - [ ] Login:
-      - [ ] authorization with JWT;
+    - [x] Login:
+      - [x] authorization with JWT;
     - [ ] Follow another user;
     - [ ] Unfollow another user;
     - [ ] Search for all users you follow;
