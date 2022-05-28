@@ -16,24 +16,24 @@ var userRoutes = []Route{
 		URI:       "/users",
 		Method:    http.MethodGet,
 		Function:  controllers.FetchUsers,
-		IsPrivate: false,
+		IsPrivate: true,
 	},
 	{
 		URI:       "/users/{id}",
 		Method:    http.MethodGet,
 		Function:  controllers.GetUserById,
-		IsPrivate: false,
+		IsPrivate: true,
 	},
 	{
 		URI:       "/users/{id}",
 		Method:    http.MethodPut,
 		Function:  controllers.UpdateUser,
-		IsPrivate: false,
+		IsPrivate: true,
 	},
 	{
 		URI:       "/users/{id}",
 		Method:    http.MethodDelete,
 		Function:  controllers.DeleteUser,
-		IsPrivate: false,
+		IsPrivate: true,
 	},
 }

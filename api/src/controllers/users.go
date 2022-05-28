@@ -1,6 +1,7 @@
 package controllers
 
 import (
+	"api/src/config"
 	"api/src/database"
 	"api/src/models"
 	"api/src/repositories"
@@ -135,6 +136,22 @@ func UpdateUser(writer http.ResponseWriter, request *http.Request) {
 		return
 	}
 
+	tokeUserId, err := config.ExtractUserId(request)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != tokeUserId {
+		responses.Error(
+			writer,
+			http.StatusForbidden,
+			errors.New("it is not allowed to update a user that is not yours"),
+		)
+		return
+	}
+
 	requestBody, err := ioutil.ReadAll(request.Body)
 
 	if err != nil {
@@ -179,6 +196,22 @@ func DeleteUser(writer http.ResponseWriter, request *http.Request) {
 
 	if err != nil {
 		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	tokeUserId, err := config.ExtractUserId(request)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != tokeUserId {
+		responses.Error(
+			writer,
+			http.StatusForbidden,
+			errors.New("it is not allowed to delete a user that is not yours"),
+		)
 		return
 	}
 
