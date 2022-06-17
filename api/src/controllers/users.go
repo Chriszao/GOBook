@@ -314,3 +314,105 @@ func UnFollowUser(writer http.ResponseWriter, request *http.Request) {
 
 	responses.JSON(writer, http.StatusNoContent, nil)
 }
+
+func FindFollowers(writer http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	followers, err := repository.FindUserFollowers(userId)
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	if len(followers) == 0 {
+		followers = []models.User{}
+	}
+
+	responses.JSON(writer, http.StatusOK, followers)
+}
+
+func FindFollowing(writer http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	followers, err := repository.FindFollowing(userId)
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	if len(followers) == 0 {
+		followers = []models.User{}
+	}
+
+	responses.JSON(writer, http.StatusOK, followers)
+}
+
+func FindFollowing(writer http.ResponseWriter, request *http.Request) {
+	params := mux.Vars(request)
+
+	userId, err := strconv.ParseUint(params["id"], 10, 64)
+
+	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	db, err := database.Connect()
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+	defer db.Close()
+
+	repository := repositories.NewUserRepository(db)
+
+	followers, err := repository.FindFollowing(userId)
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	if len(followers) == 0 {
+		followers = []models.User{}
+	}
+
+	responses.JSON(writer, http.StatusOK, followers)
+}
