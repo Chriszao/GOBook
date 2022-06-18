@@ -200,3 +200,67 @@ func (repository User) UnFollowUser(userId, followerId uint64) error {
 
 	return nil
 }
+
+func (repository User) FindUserFollowers(userId uint64) ([]models.User, error) {
+	rows, err := repository.db.Query(`
+		SELECT user.id, user.name, user.nick, user.email, user.createdAt
+		FROM user 
+		INNER JOIN follower ON user.id = follower.followerId 
+		WHERE follower.userId = ?
+	`, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var followers []models.User
+
+	for rows.Next() {
+		var follower models.User
+
+		if err := rows.Scan(
+			&follower.ID,
+			&follower.Name,
+			&follower.Nick,
+			&follower.Email,
+			&follower.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		followers = append(followers, follower)
+	}
+
+	return followers, nil
+}
+
+func (repository User) FindFollowing(userId uint64) ([]models.User, error) {
+	rows, err := repository.db.Query(`
+		SELECT user.id, user.name, user.nick, user.email, user.createdAt
+		FROM user 
+		INNER JOIN follower ON user.id = follower.userId 
+		WHERE follower.followerId = ?
+	`, userId)
+
+	if err != nil {
+		return nil, err
+	}
+
+	var followers []models.User
+
+	for rows.Next() {
+		var follower models.User
+
+		if err := rows.Scan(
+			&follower.ID,
+			&follower.Name,
+			&follower.Nick,
+			&follower.Email,
+			&follower.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		followers = append(followers, follower)
+	}
+
+	return followers, nil
+}
