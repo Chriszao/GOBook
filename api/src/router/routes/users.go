@@ -60,4 +60,10 @@ var userRoutes = []Route{
 		Function:  controllers.FindFollowing,
 		IsPrivate: true,
 	},
+	{
+		URI:       "/users/{id}/reset-password",
+		Method:    http.MethodPost,
+		Function:  controllers.ResetPassword,
+		IsPrivate: true,
+	},
 }
