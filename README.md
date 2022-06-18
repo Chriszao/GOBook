@@ -35,10 +35,10 @@
       - [x] authorization with JWT;
     - [x] Follow another user;
     - [x] Unfollow another user;
-    - [ ] Search for all users you follow;
-    - [ ] Search all users who are followed;
-    - [ ] Update Password.
-        - [ ] Database Entities: Users and Followers.
+    - [x] Search for all users you follow;
+    - [x] Search all users who are followed;
+    - [x] Update Password.
+        - [x] Database Entities: Users and Followers.
 
 - [ ] Posts:
     - [ ] CRUD;
