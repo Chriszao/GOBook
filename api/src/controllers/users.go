@@ -4,6 +4,7 @@ import (
 	"api/src/config"
 	"api/src/database"
 	"api/src/models"
+	"api/src/providers"
 	"api/src/repositories"
 	"api/src/responses"
 	"encoding/json"
@@ -383,12 +384,42 @@ func FindFollowing(writer http.ResponseWriter, request *http.Request) {
 	responses.JSON(writer, http.StatusOK, followers)
 }
 
-func FindFollowing(writer http.ResponseWriter, request *http.Request) {
+func ResetPassword(writer http.ResponseWriter, request *http.Request) {
 	params := mux.Vars(request)
 
 	userId, err := strconv.ParseUint(params["id"], 10, 64)
 
 	if err != nil {
+		responses.Error(writer, http.StatusBadRequest, err)
+		return
+	}
+
+	tokenUserId, err := config.ExtractUserId(request)
+
+	if err != nil {
+		responses.Error(writer, http.StatusUnauthorized, err)
+		return
+	}
+
+	if userId != tokenUserId {
+		responses.Error(
+			writer,
+			http.StatusForbidden,
+			errors.New("it is not allowed to update the password of a user that is not yours"),
+		)
+		return
+	}
+
+	bodyRequest, err := ioutil.ReadAll(request.Body)
+
+	if err != nil {
+		responses.Error(writer, http.StatusInternalServerError, err)
+		return
+	}
+
+	var password models.Password
+
+	if err = json.Unmarshal(bodyRequest, &password); err != nil {
 		responses.Error(writer, http.StatusBadRequest, err)
 		return
 	}
@@ -403,16 +434,43 @@ func FindFollowing(writer http.ResponseWriter, request *http.Request) {
 
 	repository := repositories.NewUserRepository(db)
 
-	followers, err := repository.FindFollowing(userId)
+	currentPassword, err := repository.FindPasswordById(userId)
 
 	if err != nil {
 		responses.Error(writer, http.StatusInternalServerError, err)
 		return
 	}
 
-	if len(followers) == 0 {
-		followers = []models.User{}
+	if err = providers.ValidatePassword(
+		password.CurrentPassword,
+		currentPassword,
+	); err != nil {
+		responses.Error(
+			writer,
+			http.StatusUnauthorized,
+			errors.New("password does not match"),
+		)
+		return
 	}
 
-	responses.JSON(writer, http.StatusOK, followers)
+	hashedPassword, err := providers.Hash(password.NewPassword)
+
+	if err != nil {
+		responses.Error(
+			writer,
+			http.StatusBadRequest,
+			err,
+		)
+		return
+	}
+
+	if err = repository.UpdatePassword(userId, string(hashedPassword)); err != nil {
+		responses.Error(
+			writer,
+			http.StatusInternalServerError,
+			err,
+		)
+	}
+
+	responses.JSON(writer, http.StatusNoContent, nil)
 }
