@@ -48,4 +48,16 @@ var userRoutes = []Route{
 		Function:  controllers.UnFollowUser,
 		IsPrivate: true,
 	},
+	{
+		URI:       "/users/{id}/followers",
+		Method:    http.MethodGet,
+		Function:  controllers.FindFollowers,
+		IsPrivate: true,
+	},
+	{
+		URI:       "/users/{id}/following",
+		Method:    http.MethodGet,
+		Function:  controllers.FindFollowing,
+		IsPrivate: true,
+	},
 }
